@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  mssql2025:
+    image: mcr.microsoft.com/mssql/server:2025-latest
+    container_name: mssql2025
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql/data
+      - mssql_logs:/var/opt/mssql/log
+      - mssql_secrets:/var/opt/mssql/secrets
+      - mssql_backups:/var/opt/mssql/backups
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-C", "-S", "localhost", "-U", "sa", "-P", "YourStrong!Passw0rd", "-Q", "SELECT 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mssql_data:
+  mssql_logs:
+  mssql_secrets:
+  mssql_backups:
